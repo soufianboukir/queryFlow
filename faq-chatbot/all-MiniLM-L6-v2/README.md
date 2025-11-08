@@ -5,14 +5,14 @@ Given a user’s question, the model finds the most semantically similar questio
 
 ## How it works
 
-### Import necessary libraries such as `pandas`, `numpy`, `sklearn`
+### Import necessary libraries such as `pandas`, `SentenceTransformer`
 
 ```py
     import pandas as pd
     from sentence_transformers import SentenceTransformer, util
 ```
 
-### Load dataset and vectorize data with tfidf model**
+### Load dataset and encode questions using all-MiniLM-L6-v2
 
 ```py
     dframe = pd.read_csv(path, encoding="latin-1")
