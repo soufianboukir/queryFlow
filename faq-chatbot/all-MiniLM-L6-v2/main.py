@@ -1,4 +1,9 @@
+
+import pandas as pd
 from sentence_transformers import SentenceTransformer, util
+
+dframe = pd.read_csv("/home/sofyan/Documents/tech-faq-chatbot/data/raw/software_questions.csv")
+
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
