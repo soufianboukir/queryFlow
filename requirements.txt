@@ -1,0 +1,15 @@
+# Core dependencies for the FAQ Chatbot
+# Note: This chatbot uses only standard library and basic NLP techniques
+# No machine learning libraries required
+
+# For CSV handling (built-in, but listed for clarity)
+# csv - built-in module
+
+# For text processing (built-in)
+# re - built-in module
+# math - built-in module
+# collections - built-in module
+
+# Optional: For better CSV handling and future enhancements
+# pandas>=2.0.0  # Uncomment if you want to use pandas for data manipulation
+
