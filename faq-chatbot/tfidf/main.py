@@ -39,4 +39,4 @@ def TfIdf(path, question):
     }
 
 
-TfIdf("/home/sofyan/Documents/tech-faq-chatbot/data/raw/software_questions.csv", "polymorphism")
+TfIdf("/home/soufian/Documents/tech-faq-chatbot/data/raw/software_questions.csv", "polymorphism")
