@@ -26,7 +26,7 @@ class MiniLMChatbot:
         best_idx = cosine_scores.argmax()
         best_score = cosine_scores[0][best_idx].item()
 
-        return self.answers[best_idx], best_score
+        return self.answers[best_idx]
     
 if __name__ == "__main__":
     csv_path = os.path.join(
@@ -42,4 +42,4 @@ if __name__ == "__main__":
             break
         answer, score = bot.ask(user)
         print(f"\nAnswer: {answer}")
-        print(f"Similarity: {score:.3f}\n")
+        # print(f"Similarity: {score:.3f}\n")
