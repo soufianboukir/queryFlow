@@ -1,8 +1,14 @@
 import pandas as pd
 from sentence_transformers import SentenceTransformer, util
+import os
 
-def MiniLM(path, question):
-    dframe = pd.read_csv(path, encoding="latin-1")
+def MiniLM(question):
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    data_path = os.path.join(BASE_DIR, "..", "data", "raw", "software_questions.csv")
+    data_path = os.path.normpath(data_path)
+
+    dframe = pd.read_csv(data_path, encoding="latin-1")
 
     model = SentenceTransformer('all-MiniLM-L6-v2')
     question_embeddings = model.encode(dframe["Question"].tolist(), convert_to_tensor=True)
@@ -11,17 +17,18 @@ def MiniLM(path, question):
 
     cos_scores = util.cos_sim(user_embedding, question_embeddings)
     best_index = int(cos_scores.argmax())
-
-    best_question = dframe.iloc[best_index]["Question"]
-    best_answer = dframe.iloc[best_index]["Answer"]
     best_similarity = cos_scores[0][best_index].item()
-
-    print("Asked question: ",question)
-    print("Most similar question:", best_question)
-    print("Best answer:", best_answer)
-    print("Similarity score:", best_similarity)
+    best_answer = dframe.iloc[best_index]["Answer"]
 
     if(best_similarity < 0.5):
-        print("I don't really know that yet!")
+        return {
+            "question": question,
+            "response": "Sorry, I don't have informations about that",
+            "similarity": best_similarity,
+        }
+    return {
+        "question": question,
+        "response": best_answer,
+        "similarity": best_similarity,
+    }
 
-MiniLM("/home/sofyan/Documents/tech-faq-chatbot/data/raw/software_questions.csv", "polymorphism")
