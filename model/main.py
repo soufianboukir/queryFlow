@@ -24,5 +24,4 @@ def MiniLM(path, question):
     if(best_similarity < 0.5):
         print("I don't really know that yet!")
 
-
 MiniLM("/home/sofyan/Documents/tech-faq-chatbot/data/raw/software_questions.csv", "polymorphism")

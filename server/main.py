@@ -2,20 +2,24 @@ from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 
-@app.route('/')
+
+@app.route("/")
 def home():
+    """Render the homepage."""
     return render_template("index.html")
 
 
-app.route("/ask",methods=['GET'])
+@app.route("/ask", methods=["GET"])
 def answer():
+    """Handle question requests and return JSON."""
     question = request.args.get("question")
-    
+
     if not question:
-        return jsonify({"message": "No question provided"}), 400
-    
-    return jsonify({"question": question})
+        return jsonify({"error": "No question provided"}), 400
+
+    response = f"Received question: {question}"
+    return jsonify({"question": question, "response": response})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
-

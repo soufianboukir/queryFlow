@@ -1,4 +1,4 @@
-name: model Model CI
+name: ML Model CI
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   model-validation:
-    name: Validate and test model model
+    name: Validate and test ml model
     runs-on: ubuntu-latest
 
     steps:
