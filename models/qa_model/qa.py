@@ -21,19 +21,24 @@ out_of_scope_mssgs = [
     "I'm designed to categorize and answer technical questions. Your current query is classified as **non-technical**, which means I cannot process it. Try rephrasing with concepts like 'cloud computing' or 'encryption.'",
     "My core model is built around technical concepts. Any query about subjects like **baking, mythology, or political science** will result in an unhelpful response, as the data simply isn't there.",
     "Please note my severe limitation: **I am not a general-purpose assistant.** I can only analyze and discuss topics related to software development, DevOps, databases, and network infrastructure.",
-    "I can only work with technical data. Asking me about a non-tech keyword like 'The Great Wall of China' or 'chocolate cake' means I have no context, as these terms are outside my **specialized training set**."
+    "I can only work with technical data. Asking me about a non-tech keyword like 'The Great Wall of China' or 'chocolate cake' means I have no context, as these terms are outside my **specialized training set**.",
 ]
+
 
 def MiniLM(question):
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-    data_path = os.path.join(BASE_DIR, "..","..", "data", "raw", "software_questions.csv")
+    data_path = os.path.join(
+        BASE_DIR, "..", "..", "data", "raw", "software_questions.csv"
+    )
     data_path = os.path.normpath(data_path)
 
     dframe = pd.read_csv(data_path, encoding="latin-1")
 
-    model = SentenceTransformer('all-MiniLM-L6-v2')
-    question_embeddings = model.encode(dframe["Question"].tolist(), convert_to_tensor=True)
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+    question_embeddings = model.encode(
+        dframe["Question"].tolist(), convert_to_tensor=True
+    )
 
     user_embedding = model.encode([question], convert_to_tensor=True)
 
@@ -41,19 +46,32 @@ def MiniLM(question):
     best_index = int(cos_scores.argmax())
     best_similarity = cos_scores[0][best_index].item()
     best_answer = dframe.iloc[best_index]["Answer"]
-    random_out_of_scope_mssg = out_of_scope_mssgs[randint(0,9)]
+    random_out_of_scope_mssg = out_of_scope_mssgs[randint(0, 9)]
 
     # check if the question is tech related or not!
-    if(isTechOrNot(question=question) == "Non-Tech"):
+    if isTechOrNot(question=question) == "Non-Tech" and best_similarity < 0.4:
         return {
             "question": question,
             "response": random_out_of_scope_mssg,
             "similarity": best_similarity,
         }
-    return {
-        "question": question,
-        "response": best_answer,
-        "similarity": best_similarity,
-    }
+    if best_similarity < 0.7:
+        # call openRouter API asking for best response
+        print("calling openrouter LLM...")
+        return {
+            "question": question,
+            "response": "NOT YET",
+            "similarity": best_similarity,
+        }
+    else:
+        return {
+            "question": question,
+            "response": best_answer,
+            "similarity": best_similarity,
+        }
 
-MiniLM("what is python")
+
+# print(MiniLM("what is python"))
+# this line prints result like this (IF THE QUESTION IS TECH RELATED AND SIMILARITY < 0.7)
+# calling openrouter LLM...
+# {'question': 'what is python', 'response': 'NOT YET', 'similarity': 0.6394509077072144}

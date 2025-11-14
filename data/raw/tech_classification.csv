@@ -1,6 +1,10 @@
 Question,Category
 What is the theoretical maximum for web server?,Tech
 Who directed the film/play Opera?,Non-Tech
+How are you?,Non-Tech
+How old are you?,Non-Tech
+How are you doing?,Non-Tech
+What is your name?,Non-Tech
 What is the difference between PostgreSQL and Spark?,Tech
 What major discovery is attributed to Earthquake?,Non-Tech
 What is the theoretical maximum for monolith?,Tech

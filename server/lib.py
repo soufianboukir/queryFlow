@@ -7,7 +7,6 @@ load_dotenv()
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 
-print(API_KEY)
 def ask_openrouter(question):
 
     url = "https://openrouter.ai/api/v1/chat/completions"
@@ -23,15 +22,15 @@ def ask_openrouter(question):
             {
                 "role": "user",
                 "content": f"""
-                    Return a CSV row with fields: Answer,Category. 
-                    Format example: "Compilation translates source code into machine code.",General Programming
-                    Question: {question}
-                    Only return the CSV row.
-                """
+Return a CSV row with fields: Answer,Category.
+Format example:
+"Compilation translates source code into machine code.",General Programming
+Question: {question}
+Only return the CSV row.
+                """,
             }
-        ]
+        ],
     }
-
 
     response = requests.post(url, headers=headers, data=json.dumps(payload))
 
