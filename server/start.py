@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import sys
 
 app = Flask(__name__)
-sys.path.insert(0, "../model")
+sys.path.insert(0, "../models/qa_model")
 import main
 
 @app.route("/")
