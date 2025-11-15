@@ -40,6 +40,6 @@ if __name__ == "__main__":
         user = input("You: ").strip()
         if user.lower() in {"quit", "exit"}:
             break
-        answer, score = bot.ask(user)
+        answer = bot.ask(user)
         print(f"\nAnswer: {answer}")
         # print(f"Similarity: {score:.3f}\n")

@@ -8,13 +8,13 @@ class ChatbotGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("showChat")
-        self.root.geometry("600x700")
+        self.root.geometry("500x600")
         self.root.configure(bg="#f0f0f0")
 
         title_label = tk.Label(
             root,
             text="Tech Chatbot",
-            font=("Arial", 1, "bold"),
+            font=("Arial", 12, "bold"),
             bg="#4a90e2",
             fg="white",
             pady=10
@@ -26,7 +26,7 @@ class ChatbotGUI:
             wrap=tk.WORD,
             width=70,
             height=30,
-            font=('Arial, 10'),
+            font=('Arial', 10),
             bg="white",
             state=tk.DISABLED
         )
@@ -71,7 +71,7 @@ class ChatbotGUI:
         'data', 'raw', 'Software Questions.csv'
         )
         bot = MiniLMChatbot(csv_path)
-        return bot.ask(self, user_input)
+        return bot.ask(user_input)
     
     def display_msg(self, sender, msg):
         self.chat_area.config(state=tk.NORMAL)
