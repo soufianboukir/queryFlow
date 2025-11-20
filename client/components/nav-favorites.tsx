@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  FolderPen,
-  MoreHorizontal,
-  Share,
-  Trash2,
-} from "lucide-react";
+import { FolderPen, MoreHorizontal, Share, Trash2 } from "lucide-react";
 
 import {
   DropdownMenu,

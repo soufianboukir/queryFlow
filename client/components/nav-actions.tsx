@@ -36,7 +36,6 @@ const data = [
 export function NavActions() {
   const [isOpen, setIsOpen] = React.useState(false);
 
-
   return (
     <div className="flex items-center gap-2 text-sm">
       <div className="text-muted-foreground hidden font-medium md:inline-block">
@@ -49,7 +48,7 @@ export function NavActions() {
       <ModeToggle />
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-            <MoreHorizontal className="ml-2"/>
+          <MoreHorizontal className="ml-2" />
         </PopoverTrigger>
         <PopoverContent
           className="w-40 overflow-hidden rounded-lg p-0"

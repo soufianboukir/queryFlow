@@ -1,4 +1,4 @@
 // export const ask = (query: string) =>{
-//     const response = 
+//     const response =
 //     return response
 // }

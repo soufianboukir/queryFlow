@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { NavActions } from "@/components/nav-actions";
@@ -8,7 +8,13 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupTextarea } from "@/components/ui/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupText,
+  InputGroupTextarea,
+} from "@/components/ui/input-group";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -17,14 +23,19 @@ import {
 } from "@/components/ui/sidebar";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import { ArrowUp, LoaderIcon } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, KeyboardEvent } from "react";
+
+type Message = {
+  role: "user" | "assistant";
+  content: string;
+};
 
 export default function Page() {
-  const [loading, setLoading] = useState(false);
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([]);
-  const [streamText, setStreamText] = useState("");
-  const chatRef = useRef(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [input, setInput] = useState<string>("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [streamText, setStreamText] = useState<string>("");
+  const chatRef = useRef<HTMLDivElement | null>(null);
 
   const send = () => {
     if (!input.trim()) return;
@@ -33,7 +44,8 @@ export default function Page() {
     setInput("");
     setLoading(true);
 
-    const reply = "Hello! This is a streaming AI response demo. How can I help? Hello! This is a streaming AI response demo. How can I help?";
+    const reply =
+      "Hello! This is a streaming AI response demo. How can I help? Hello! This is a streaming AI response demo. How can I help?";
     let i = 0;
     const interval = setInterval(() => {
       setStreamText(reply.slice(0, i));
@@ -53,7 +65,7 @@ export default function Page() {
     }
   }, [messages, streamText]);
 
-  const handleKey = (e) => {
+  const handleKey = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       send();
@@ -67,7 +79,10 @@ export default function Page() {
         <header className="flex h-14 shrink-0 items-center gap-2">
           <div className="flex flex-1 items-center gap-2 px-3">
             <SidebarTrigger />
-            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 data-[orientation=vertical]:h-4"
+            />
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
@@ -83,8 +98,12 @@ export default function Page() {
           </div>
         </header>
 
-        <div className={`flex flex-col w-full md:w-[80%] lg:w-[60%] mx-auto px-4 py-6 ${messages.length == 0 && 'mt-[10%]'}`}>
-          <div className={`flex flex-col flex-1 ${messages.length === 0 ? "justify-center" : "justify-start"} gap-4`}>
+        <div
+          className={`flex flex-col w-full md:w-[80%] lg:w-[60%] mx-auto px-4 py-6 ${messages.length === 0 ? "mt-[10%]" : ""}`}
+        >
+          <div
+            className={`flex flex-col flex-1 ${messages.length === 0 ? "justify-center" : "justify-start"} gap-4`}
+          >
             {messages.length === 0 && (
               <h1 className="text-center lg:text-3xl text-2xl font-semibold">
                 Hello, how can I help you?
@@ -93,15 +112,15 @@ export default function Page() {
 
             <div
               ref={chatRef}
-              className="flex flex-col gap-3 overflow-y-auto px-3 py-2 rounded-lg flex-1 max-h-[70vh] no-scrollbar"
+              className="flex flex-col gap-4 overflow-y-auto px-3 py-2 rounded-lg flex-1 max-h-[70vh] no-scrollbar"
             >
               {messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`p-2 rounded-xl text-lg ${
+                  className={`p-2 rounded-xl ${
                     msg.role === "user"
-                      ? "ml-auto max-w-[80%] bg-gray-100/90 dark:bg-gray-100/5 px-4"
-                      : "font-sans"
+                      ? "ml-auto max-w-[80%] bg-gray-100/90 dark:bg-gray-100/5 text-md px-4"
+                      : "font-sans dark:text-white/60 text-lg text-black/60"
                   }`}
                 >
                   {msg.content}
@@ -109,7 +128,7 @@ export default function Page() {
               ))}
 
               {streamText && (
-                <div className="p-2 rounded-xl text-lg font-sans">
+                <div className="p-2 rounded-xl text-lg font-sans dark:text-white/60 text-lg text-black/60">
                   {streamText}
                   <span className="animate-pulse text-lg">▌</span>
                 </div>
@@ -122,6 +141,7 @@ export default function Page() {
               <InputGroupTextarea
                 placeholder="Ask anything..."
                 value={input}
+                readOnly={loading}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKey}
                 rows={Math.min(6, Math.max(1, input.split("\n").length))}
@@ -137,13 +157,20 @@ export default function Page() {
                   onClick={send}
                   disabled={loading}
                 >
-                  {loading ? <LoaderIcon className="animate-spin" /> : <ArrowUp />}
+                  {loading ? (
+                    <LoaderIcon className="animate-spin" />
+                  ) : (
+                    <ArrowUp />
+                  )}
                   <span className="sr-only">Send</span>
                 </InputGroupButton>
               </InputGroupAddon>
             </InputGroup>
 
-            <p className="mt-2 text-white/40 text-sm text-center">queryFlow always make mistakes. don't take anything</p>
+            <p className="mt-2 text-white/40 text-sm text-center">
+              queryFlow always makes mistakes. Don&apos;t take anything as
+              absolute.
+            </p>
           </div>
         </div>
       </SidebarInset>
