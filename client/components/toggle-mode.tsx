@@ -1,16 +1,15 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
-import { Moon, Sun } from "lucide-react"
+import * as React from "react";
+import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
 
 export function ThemeProvider({
   children,
   ...props
 }: React.ComponentProps<typeof NextThemesProvider>) {
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }
-
 
 export function ModeToggle() {
   const { theme, setTheme } = useTheme();

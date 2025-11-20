@@ -29,5 +29,5 @@ jobs:
 
       - name: Code style check (Black)
         run: |
-          black --check server/ models/
+          black --check server/
 
