@@ -16,7 +16,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
-import { ArrowUp, LoaderIcon, PlusIcon } from "lucide-react";
+import { ArrowUp, LoaderIcon } from "lucide-react";
 import { useState } from "react";
 
 export default function Page() {
