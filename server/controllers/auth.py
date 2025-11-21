@@ -2,7 +2,7 @@ import requests
 from flask import request, jsonify
 from config.db import get_db
 from config.google_oauth import *
-from utils.jwt import create_token
+from utils.jwt_utils import create_token
 
 db = get_db()
 users = db["users"]
