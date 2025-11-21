@@ -34,4 +34,3 @@ def isTechOrNot(question):
     return prediction[0]  # this returns "Tech" OR "Non-Tech"
 
 
-isTechOrNot("hello how are you?")
