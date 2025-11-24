@@ -2,8 +2,8 @@ from flask import Flask
 from flask_cors import CORS
 
 app = Flask(__name__)
-from routes.auth import auth
-from routes.ask_route import askQue
+from server.routes.auth import auth
+from server.routes.ask_route import askQue
 
 CORS(app, supports_credentials=True)
 

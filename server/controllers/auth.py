@@ -1,9 +1,9 @@
 import requests
 from flask import request, jsonify, make_response
-from config.db import get_db
-from config.google_oauth import *
-from utils.jwt_utils import create_token
-from utils.jwt_utils import verify_token
+from server.config.db import get_db
+from server.config.google_oauth import *
+from server.utils.jwt_utils import create_token
+from server.utils.jwt_utils import verify_token
 from bson import ObjectId
 
 
