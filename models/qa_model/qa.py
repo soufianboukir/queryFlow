@@ -3,12 +3,12 @@ from sentence_transformers import SentenceTransformer, util
 import os
 from random import randint
 import sys
+
+from models.classification_model.classification import isTechOrNot
 from server import lib
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
-
-from classification_model.classification import isTechOrNot
 
 
 out_of_scope_mssgs = [

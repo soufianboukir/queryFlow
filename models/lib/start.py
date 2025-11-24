@@ -542,7 +542,7 @@ for _ in range(num_rows):
     data.append([question, category])
 
 with open(
-    "../../data/raw/tech_classification.csv", "w", newline="", encoding="utf-8"
+        "../../data/raw/tech_classification.csv", "w", newline="", encoding="utf-8"
 ) as f:
     writer = csv.writer(f)
     writer.writerow(["Question", "Category"])

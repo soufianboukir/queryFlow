@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from models.qa_model import qa
+from server.db.db import db
 
 app = Flask(__name__)
 
@@ -23,5 +24,49 @@ def answer():
     return jsonify(response)
 
 
+
+@app.route("/add-history", methods=["POST"])
+def add_history():
+    data = request.json
+    user_id = data.get("userId")
+    question = data.get("question")
+    answer = data.get("answer")
+
+    if not all([user_id, question, answer]):
+        return jsonify({"error": "Missing fields"}), 400
+
+    try:
+        db.history.insert_one({
+            "userId": user_id,
+            "question": question,
+            "answer": answer
+        })
+        return jsonify({"message": "History saved!"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
