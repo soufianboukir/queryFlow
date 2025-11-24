@@ -1,16 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import request, jsonify
 from models.qa_model import qa
 
-app = Flask(__name__)
 
-
-@app.route("/")
-def home():
-    return jsonify({"message": "hiii!"})
-
-
-@app.route("/ask", methods=["GET"])
-def answer():
+def getAnswer():
     question = request.args.get("question")
 
     if not question:
@@ -21,7 +13,3 @@ def answer():
 
     response = qa.MiniLM(question)
     return jsonify(response)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

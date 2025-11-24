@@ -3,7 +3,7 @@ from sentence_transformers import SentenceTransformer, util
 import os
 from random import randint
 import sys
-from server import lib
+from utils import lib
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
