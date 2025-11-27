@@ -38,8 +38,8 @@ export function Histories() {
 
   const [histories, setHistories] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [toPublic, setToPublic] = useState(false)
-  const [url, setUrl] = useState('')
+  const [toPublic, setToPublic] = useState(false);
+  const [url, setUrl] = useState("");
 
   useEffect(() => {
     const fetchHistories = async () => {
@@ -79,7 +79,7 @@ export function Histories() {
 
   const handleRename = (id: string, newTitle: string) => {
     setHistories((prev) =>
-      prev.map((h) => (h._id === id ? { ...h, title: newTitle } : h))
+      prev.map((h) => (h._id === id ? { ...h, title: newTitle } : h)),
     );
   };
 
@@ -87,9 +87,12 @@ export function Histories() {
     setHistories((prev) => prev.filter((h) => h._id !== id));
   };
 
-  const handleChangeVisibility = (id: string, newVisibility: "public" | "private") => {
+  const handleChangeVisibility = (
+    id: string,
+    newVisibility: "public" | "private",
+  ) => {
     setHistories((prev) =>
-      prev.map((h) => (h._id === id ? { ...h, visibility: newVisibility } : h))
+      prev.map((h) => (h._id === id ? { ...h, visibility: newVisibility } : h)),
     );
   };
 
@@ -181,11 +184,7 @@ export function Histories() {
             </DropdownMenu>
           </SidebarMenuItem>
         ))}
-        {
-          toPublic && (
-            <ChatLink url={url}/>
-          )
-        }
+        {toPublic && <ChatLink url={url} />}
         <SidebarMenuItem>
           <SidebarMenuButton className="text-sidebar-foreground/70">
             <MoreHorizontal />

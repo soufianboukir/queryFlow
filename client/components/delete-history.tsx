@@ -19,10 +19,10 @@ import { toast } from "sonner";
 
 export function DeleteHistory({
   id,
-  onDeleted
+  onDeleted,
 }: {
   id: string;
-  onDeleted: (id: string) => void,
+  onDeleted: (id: string) => void;
 }) {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,28 +31,27 @@ export function DeleteHistory({
     if (text.trim().toLowerCase() !== "delete") return;
 
     setLoading(true);
-    
+
     try {
       const token = document.cookie
         .split("; ")
         .find((row) => row.startsWith("token="))
         ?.split("=")[1];
 
-      const res = await deleteHistory(id, token!)
-        
-        
-      if(res.status === 200){
-        toast.success(res.data.message)
-        onDeleted(id)
-        }
-    } catch (err) {
-        toast.error("An error occured. Try again")
+      const res = await deleteHistory(id, token!);
+
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        onDeleted(id);
+      }
+    } catch {
+      toast.error("An error occured. Try again");
     } finally {
       setLoading(false);
       setText("");
 
       const closeBtn = document.querySelector(
-        "[data-delete-dialog-close]"
+        "[data-delete-dialog-close]",
       ) as HTMLButtonElement | null;
       closeBtn?.click();
     }
@@ -73,7 +72,9 @@ export function DeleteHistory({
         <DialogHeader>
           <DialogTitle>Delete history</DialogTitle>
           <DialogDescription>
-            Type <strong className="dark:text-white/70 text-black/70">delete</strong> to confirm deletion.
+            Type{" "}
+            <strong className="dark:text-white/70 text-black/70">delete</strong>{" "}
+            to confirm deletion.
           </DialogDescription>
         </DialogHeader>
 

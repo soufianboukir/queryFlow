@@ -122,7 +122,7 @@ export default function Page() {
         queryParams.append("history_url", activeUrl);
       }
 
-      const response = await ask(token, queryParams)
+      const response = await ask(token, queryParams);
 
       const data = response.data;
       const assistantResponse = data.response || "";
@@ -179,7 +179,7 @@ export default function Page() {
           return;
         }
 
-        const response = await getQueriesByHistory(token, routeHistoryUrl)
+        const response = await getQueriesByHistory(token, routeHistoryUrl);
 
         if (response.status === 404) {
           setLoading(false);

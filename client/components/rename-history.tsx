@@ -20,47 +20,46 @@ import { toast } from "sonner";
 export function RenameHistory({
   id,
   title,
-  onRename
+  onRename,
 }: {
   id: string;
-  onRename: (id: string, newTitle: string) => void,
-  title: string
+  onRename: (id: string, newTitle: string) => void;
+  title: string;
 }) {
-  const [titleInput, setTitleInput] = useState(title || '');
+  const [titleInput, setTitleInput] = useState(title || "");
   const [loading, setLoading] = useState(false);
 
   const handleEdit = async () => {
     if (titleInput.trim().toLowerCase() === "") return;
 
     setLoading(true);
-    
+
     try {
       const token = document.cookie
         .split("; ")
         .find((row) => row.startsWith("token="))
         ?.split("=")[1];
 
-      const res = await updateTitle(id, titleInput, token!)
-        
-        
-      if(res.status === 200){
-        toast.success(res.data.message)
-        onRename(id, res.data.title)
-    }
-    } catch (err) {
-        toast.error("An error occured. Try again")
+      const res = await updateTitle(id, titleInput, token!);
+
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        onRename(id, res.data.title);
+      }
+    } catch {
+      toast.error("An error occured. Try again");
     } finally {
       setLoading(false);
       setTitleInput("");
 
       const closeBtn = document.querySelector(
-        "[data-delete-dialog-close]"
+        "[data-delete-dialog-close]",
       ) as HTMLButtonElement | null;
       closeBtn?.click();
     }
   };
 
-const valid = titleInput.trim().length > 0;
+  const valid = titleInput.trim().length > 0;
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -80,7 +79,7 @@ const valid = titleInput.trim().length > 0;
 
         <Input
           placeholder="Your title"
-            onKeyDown={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
           value={titleInput}
           onChange={(e) => setTitleInput(e.target.value)}
         />

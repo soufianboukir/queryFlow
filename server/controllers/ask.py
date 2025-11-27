@@ -45,8 +45,7 @@ def getAnswer():
         url = history_doc["url"]
 
         db.history.update_one(
-            {"_id": history_id},
-            {"$set": {"last_updated": datetime.utcnow()}}
+            {"_id": history_id}, {"$set": {"last_updated": datetime.utcnow()}}
         )
 
     model_res = qa.MiniLM(question)

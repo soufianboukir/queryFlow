@@ -21,44 +21,42 @@ export function ChangeVisibility({
   hisVisibility,
   setToPublic,
   setUrl,
-  onChangeVis
+  onChangeVis,
 }: {
   id: string;
-  setUrl: (url: string) => void
-  hisVisibility: 'public' | 'private';
+  setUrl: (url: string) => void;
+  hisVisibility: "public" | "private";
   setToPublic: (toPublic: boolean) => void;
-  onChangeVis: (newVisibility: "public" | "private") => void
+  onChangeVis: (newVisibility: "public" | "private") => void;
 }) {
   const [loading, setLoading] = useState(false);
-  const visibility = hisVisibility === 'private' ? 'public' : 'private'
+  const visibility = hisVisibility === "private" ? "public" : "private";
   const handleEdit = async () => {
-
     setLoading(true);
-    
+
     try {
       const token = document.cookie
         .split("; ")
         .find((row) => row.startsWith("token="))
         ?.split("=")[1];
 
-      const res = await updateVisibility(id, token!, visibility)
-        
-        
-      if(res.status === 200){
-        toast.success(res.data.message)
-        onChangeVis(res.data.visibility)
-        if(res.data.visibility === "public"){
-            setToPublic(true)
-            setUrl(res.data.url)
+      const res = await updateVisibility(id, token!, visibility);
+
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        onChangeVis(res.data.visibility);
+        if (res.data.visibility === "public") {
+          setToPublic(true);
+          setUrl(res.data.url);
         }
-    }
-    } catch (err) {
-        toast.error("An error occured. Try again")
+      }
+    } catch {
+      toast.error("An error occured. Try again");
     } finally {
       setLoading(false);
 
       const closeBtn = document.querySelector(
-        "[data-delete-dialog-close]"
+        "[data-delete-dialog-close]",
       ) as HTMLButtonElement | null;
       closeBtn?.click();
     }

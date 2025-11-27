@@ -26,8 +26,6 @@ def create_history(user_id, title, visibility="private"):
     return str(result.inserted_id), doc["url"]
 
 
-
-
 def serialize_mongo_doc(doc):
     if isinstance(doc, ObjectId):
         return str(doc)
@@ -106,8 +104,7 @@ def update_visibility(id):
             return jsonify({"error": "visibility must be 'public' or 'private'"}), 400
 
         result = db.history.update_one(
-            {"_id": ObjectId(id)},
-            {"$set": {"visibility": visibility}}
+            {"_id": ObjectId(id)}, {"$set": {"visibility": visibility}}
         )
 
         if result.matched_count == 0:
@@ -117,15 +114,21 @@ def update_visibility(id):
         history = db.history.find_one({"_id": ObjectId(id)}, {"url": 1})
         url = history.get("url") if history else None
 
-        return jsonify({
-            "message": "Visibility updated successfully",
-            "history_id": id,
-            "url": url,
-            "visibility": visibility
-        }), 200
+        return (
+            jsonify(
+                {
+                    "message": "Visibility updated successfully",
+                    "history_id": id,
+                    "url": url,
+                    "visibility": visibility,
+                }
+            ),
+            200,
+        )
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 def update_title(id):
     try:
@@ -136,22 +139,25 @@ def update_title(id):
             return jsonify({"error": "title is required"}), 400
 
         result = db.history.update_one(
-            {"_id": ObjectId(id)},
-            {"$set": {"title": title}}
+            {"_id": ObjectId(id)}, {"$set": {"title": title}}
         )
 
         if result.matched_count == 0:
             return jsonify({"error": "History not found"}), 404
 
-        return jsonify({
-            "message": "Title updated successfully",
-            "history_id": id,
-            "title": title
-        }), 200
+        return (
+            jsonify(
+                {
+                    "message": "Title updated successfully",
+                    "history_id": id,
+                    "title": title,
+                }
+            ),
+            200,
+        )
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 
 def delete_history(id):
@@ -179,4 +185,3 @@ def delete_history(id):
     db.queries.delete_many({"history_id": history_id})
 
     return jsonify({"message": "History deleted successfully"})
-
