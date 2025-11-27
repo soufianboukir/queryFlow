@@ -102,10 +102,10 @@ def update_visibility(id):
         data = request.get_json()
         visibility = data.get("visibility")
 
-        if visibility is None:
-            return jsonify({"error": "visibility is required"}), 400
+        if visibility not in ["public", "private"]:
+            return jsonify({"error": "visibility must be 'public' or 'private'"}), 400
 
-        result = db.histories.update_one(
+        result = db.history.update_one(
             {"_id": ObjectId(id)},
             {"$set": {"visibility": visibility}}
         )
@@ -113,15 +113,19 @@ def update_visibility(id):
         if result.matched_count == 0:
             return jsonify({"error": "History not found"}), 404
 
+        # Fetch the updated document to return URL
+        history = db.history.find_one({"_id": ObjectId(id)}, {"url": 1})
+        url = history.get("url") if history else None
+
         return jsonify({
             "message": "Visibility updated successfully",
             "history_id": id,
+            "url": url,
             "visibility": visibility
         }), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
 
 def update_title(id):
     try:
@@ -131,7 +135,7 @@ def update_title(id):
         if not title:
             return jsonify({"error": "title is required"}), 400
 
-        result = db.histories.update_one(
+        result = db.history.update_one(
             {"_id": ObjectId(id)},
             {"$set": {"title": title}}
         )
@@ -150,21 +154,20 @@ def update_title(id):
 
 
 
-
-def delete_history(history_id):
+def delete_history(id):
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         return jsonify({"error": "Missing token"}), 401
 
     token = auth_header.split(" ")[1]
-    
+
     try:
         user_id = ObjectId(verify_token(token))
     except:
         return jsonify({"error": "Invalid token"}), 401
 
     try:
-        history_id = ObjectId(history_id)
+        history_id = ObjectId(id)
     except:
         return jsonify({"error": "Invalid history_id"}), 400
 
@@ -176,5 +179,4 @@ def delete_history(history_id):
     db.queries.delete_many({"history_id": history_id})
 
     return jsonify({"message": "History deleted successfully"})
-
 
