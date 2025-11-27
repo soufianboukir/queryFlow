@@ -20,6 +20,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { getHistories } from "@/services/history";
 
 type HistoryItem = {
   id: number;
@@ -48,24 +49,17 @@ export function Histories() {
           return;
         }
 
-        const res = await fetch(`http://localhost:5000/api/history/all`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await getHistories(token)
 
-        if (!res.ok) {
-          throw new Error(`Failed to fetch histories: ${res.statusText}`);
+        if (response.status !== 200) {
+          throw new Error(`Failed to fetch histories`);
         }
 
-        const data = await res.json();
 
-        if (data.histories && Array.isArray(data.histories)) {
-          setHistories(data.histories);
+        if (response.data.histories && Array.isArray(response.data.histories)) {
+          setHistories(response.data.histories);
         } else {
-          setHistories(data);
+          setHistories(response.data);
         }
       } catch (error) {
         console.error("Error fetching chat histories:", error);
