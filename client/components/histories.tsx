@@ -51,7 +51,6 @@ export function Histories() {
           ?.split("=")[1];
 
         if (!token) {
-          console.error("Authentication token not found.");
           setLoading(false);
           return;
         }
@@ -132,7 +131,10 @@ export function Histories() {
       <SidebarMenu>
         {histories.map((item) => (
           <SidebarMenuItem key={item.url} className="h-8">
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton
+              asChild
+              isActive={"/chat/" + item.url === window.location.pathname}
+            >
               <Link href={`/chat/${item.url}`} title={item.title}>
                 <span>{item.title}</span>
               </Link>

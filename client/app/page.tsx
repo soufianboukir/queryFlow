@@ -22,11 +22,13 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
-import { ArrowUp, LoaderIcon } from "lucide-react";
+import { ArrowUp, Loader2Icon, LoaderIcon } from "lucide-react";
 import { useState, useEffect, useRef, KeyboardEvent, JSX } from "react";
 import { useParams } from "next/navigation";
 import { ask } from "@/services/ask";
 import { getQueriesByHistory } from "@/services/history";
+import { User } from "@/types/user";
+import { getCurrentUser } from "@/services/auth";
 
 type Message = {
   role: "user" | "assistant";
@@ -46,47 +48,63 @@ export default function Page() {
   const [streamText, setStreamText] = useState<string>("");
   const chatRef = useRef<HTMLDivElement | null>(null);
   const [historyId, setHistoryId] = useState<string | null>(null);
+  const [loadingRes, setLoadingRes] = useState(false);
+  const [loadUser, setLoadUser] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
 
   function formatText(text: string) {
-    const regex = /(\*\*([^\*]+)\*\*)|'([^']+)'/g;
-    const parts: (string | JSX.Element)[] = [];
-    let lastIndex = 0;
-    let match: RegExpExecArray | null;
+    if (typeof text !== "string") return text;
 
-    while ((match = regex.exec(text)) !== null) {
+    let cleaned = text.trim();
+
+    if (
+      (cleaned.startsWith('"') && cleaned.endsWith('"')) ||
+      (cleaned.startsWith("'") && cleaned.endsWith("'"))
+    ) {
+      cleaned = cleaned.slice(1, -1).trim();
+    }
+
+    const regex = /(\*\*([^\*]+)\*\*)|'([^']+)'/g;
+
+    const parts: (string | JSX.Element)[] = [];
+    let last = 0;
+    let match;
+
+    while ((match = regex.exec(cleaned)) !== null) {
       const start = match.index;
-      const fullMatch = match[0];
-      const insideStars = match[2];
+      const full = match[0];
+      const bold = match[2];
       const insideQuotes = match[3];
 
-      if (start > lastIndex) {
-        parts.push(text.slice(lastIndex, start));
+      if (start > last) {
+        parts.push(cleaned.slice(last, start));
       }
 
-      if (insideStars) {
+      if (bold) {
         parts.push(
           <strong key={start} className="dark:text-white/90 text-black/90">
-            {insideStars.trim()}
+            {bold.trim()}
           </strong>,
         );
       } else if (insideQuotes) {
-        const cleaned = insideQuotes.trim().replace(/^[^\w]+|[^\w]+$/g, "");
-        if (cleaned.length >= 5 && cleaned.length <= 30) {
+        const short = insideQuotes.trim();
+
+        if (short.length >= 5 && short.length <= 30) {
           parts.push(
             <strong key={start} className="text-black dark:text-white">
-              {cleaned}
+              {short}
             </strong>,
           );
         } else {
-          parts.push(fullMatch);
+          parts.push(full);
         }
       }
 
-      lastIndex = start + fullMatch.length;
+      last = start + full.length;
     }
 
-    if (lastIndex < text.length) {
-      parts.push(text.slice(lastIndex));
+    if (last < cleaned.length) {
+      parts.push(cleaned.slice(last));
     }
 
     return parts;
@@ -112,6 +130,8 @@ export default function Page() {
         return;
       }
 
+      setLoadingRes(true);
+
       const queryParams = new URLSearchParams({
         question: userMessage,
       });
@@ -126,6 +146,8 @@ export default function Page() {
 
       const data = response.data;
       const assistantResponse = data.response || "";
+
+      setLoadingRes(false);
 
       if (data.history_id) {
         if (!historyId) setHistoryId(data.history_id);
@@ -158,6 +180,7 @@ export default function Page() {
     } catch (err) {
       console.error("Error:", err);
       setLoading(false);
+      setLoadingRes(false);
     }
   };
 
@@ -225,6 +248,51 @@ export default function Page() {
     }
   };
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token="))
+        ?.split("=")[1];
+
+      if (!token) {
+        setLoadUser(false);
+        return;
+      }
+      try {
+        const response = await getCurrentUser(token);
+        setUser(response.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadUser(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const homeMessages = [
+    "Hello {name}, how can I help you?",
+    "Welcome {name}! Ask about software or technology.",
+    "Hi {name}! I’m ready to help you find answers from our FAQ dataset.",
+    "Hey {name}! Ask a tech question?",
+    "Hello {name}! Explore our FAQ chatbot",
+    "Welcome {name}! Ask any technical question.",
+  ];
+
+  const [welcomeMessage, setWelcomeMessage] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      const msg = homeMessages[
+        Math.floor(Math.random() * homeMessages.length)
+      ].replace("{name}", user.name.split(" ")[0]);
+
+      setWelcomeMessage(msg);
+    }
+  }, [user]);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -240,7 +308,7 @@ export default function Page() {
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <BreadcrumbPage className="line-clamp-1">
-                    Chat with nexus.ai
+                    Chat with queryFlow.ai
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
@@ -268,9 +336,13 @@ export default function Page() {
               </div>
             )}
 
-            {!loading && messages.length === 0 && (
-              <h1 className="text-center lg:text-3xl text-2xl font-semibold">
-                Hello, how can I help you?
+            {!loading && !loadUser && messages.length === 0 && (
+              <h1
+                className="text-center lg:text-3xl text-2xl font-semibold 
+                  bg-linear-to-r from-blue-200 via-blue-500 to-blue-200 
+                            bg-clip-text text-transparent"
+              >
+                {welcomeMessage}
               </h1>
             )}
 
@@ -290,6 +362,19 @@ export default function Page() {
                   {formatText(msg.content)}
                 </div>
               ))}
+
+              {loadingRes && (
+                <div
+                  className={`p-2 flex gap-1 items-center rounded-xl font-sans text-xl text-black/70 dark:text-white/70 animate-pulse`}
+                  style={{ animationDuration: "1.3s" }}
+                >
+                  <Loader2Icon
+                    className="animate-spin"
+                    style={{ animationDuration: "0.6s" }}
+                  />{" "}
+                  <span>Wait a sec...</span>
+                </div>
+              )}
 
               {streamText && (
                 <div className="p-2 rounded-xl text-xl font-sans dark:text-white/70 text-black/70">
@@ -332,9 +417,8 @@ export default function Page() {
               </InputGroupAddon>
             </InputGroup>
 
-            <p className="mt-2 text-white/40 text-sm text-center">
-              queryFlow always makes mistakes. Don&apos;t take anything as
-              absolute.
+            <p className="mt-2 dark:text-white/40 text-sm text-center text-black/40">
+              queryFlow always make mistakes. Don&apos;t take anything
             </p>
           </div>
         </div>

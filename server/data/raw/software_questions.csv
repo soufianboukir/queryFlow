@@ -514,4 +514,32 @@ tell me something in networking,Routing tables determine the path data packets t
 what is HTML,"HTML (HyperText Markup Language) is the standard markup language used to create and structure content on web pages, using tags to define elements like headings, paragraphs, links, images, and more."
 what is CSS?,"CSS (Cascading Style Sheets) is a stylesheet language used to control the presentation and styling of HTML documents, including layout, colors, fonts, and spacing."
 what is PHP,"PHP is a server-side scripting language designed for web development, originally standing for Personal Home Page but now recursively named PHP: Hypertext Preprocessor."
-what is MYsql,"MySQL is an open-source relational database management system (RDBMS) that uses Structured Query Language (SQL) to manage and manipulate databases. It is widely used for web applications and online publishing due to its reliability, scalability, and ease of use."
+what CPU means,"CPU stands for Central Processing Unit, which is the primary component of a computer responsible for executing instructions from programs and performing arithmetic, logic, control, and input/output operations."
+what is hardware,"Hardware refers to the physical components of a computer system, such as the processor, memory, storage devices, input/output devices, and other tangible parts that make up a computer."
+what is django,"Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design. It handles much of the complexity of web development, allowing developers to focus on building applications without needing to reinvent the wheel. It includes features such as an ORM (Object-Relational Mapper), authentication, URL routing, templating, and an admin interface, making it ideal for building robust web applications quickly and securely."
+what is node,"Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine that allows executing JavaScript code server-side, enabling developers to build scalable network applications using JavaScript on the backend."
+what is mysql,"MySQL is an open-source relational database management system (RDBMS) that uses Structured Query Language (SQL) to manage and manipulate databases. It is widely used for web applications and online publishing due to its reliability, scalability, and ease of use."
+Hello,Hi! How can I help you today?
+Hello,Hello! Hope you're doing well.
+Hi there,Hey! How can I assist you?
+Good morning,Good morning! How can I support you?
+Hey,Hey! What's up?
+Hello friend,Hi! How can I assist you today?
+Greetings,Greetings! How may I help?
+Hi assistant,Hi! What can I help you with?
+Yo,Yo! Need anything?
+Hi!,Hi! How's it going?
+Hello bot,Hello! How can I assist you?
+Hello there,Hello there! What do you need?
+Hi AI,Hi! How can I assist today?
+Hey chatbot,Hey! I'm here to help.
+Nice to meet you,Nice to meet you! How can I assist?
+Hello system,Hello! What can I do for you?
+What's up?,All good! How can I help you?
+Hi again,Welcome back! What do you need?
+Hello assistant,Hello! How can I assist you?
+Hey there!,Hey there! How’s it going?
+Good evening,Good evening! What can I help you with?
+Hi hello,Hello! How can I assist?
+Hello user,Hello! What do you need today?
+Welcome,Welcome! How may I help you?

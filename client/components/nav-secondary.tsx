@@ -1,17 +1,15 @@
 import React from "react";
-import { type LucideIcon } from "lucide-react";
+import { GithubIcon, type LucideIcon } from "lucide-react";
 
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
-  SidebarMenuBadge,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { HelpDialog } from "./help";
+import { TeamDialog } from "./team";
 
 export function NavSecondary({
-  items,
   ...props
 }: {
   items: {
@@ -24,18 +22,19 @@ export function NavSecondary({
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
-        <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <a href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </a>
-              </SidebarMenuButton>
-              {item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
-            </SidebarMenuItem>
-          ))}
+        <SidebarMenu className="flex flex-col gap-3">
+          <a
+            className="flex gap-2 items-center ml-1.5"
+            href="https://github.com/soufianboukir/queryFlow"
+            target="_blank"
+          >
+            <GithubIcon size={15} />
+            <span>Github</span>
+          </a>
+
+          <HelpDialog />
+
+          <TeamDialog />
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
