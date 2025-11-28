@@ -91,6 +91,5 @@ def getResponse(question):
 
 import uuid
 
-
 def generate_url():
     return "chat_" + uuid.uuid4().hex[:10]

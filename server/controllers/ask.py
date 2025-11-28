@@ -12,15 +12,15 @@ db = get_db()
 
 def getAnswer():
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return jsonify({"error": "Missing token"}), 401
+    token = None
+    user_id = None
 
-    token = auth_header.split(" ")[1]
-
-    try:
-        user_id = ObjectId(verify_token(token))
-    except Exception:
-        return jsonify({"error": "Invalid token"}), 401
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split(" ")[1]
+        try:
+            user_id = ObjectId(verify_token(token))
+        except Exception:
+            user_id = None
 
     question = request.args.get("question")
     if not question:
@@ -33,13 +33,22 @@ def getAnswer():
     url = None
 
     if history_url:
-        history_doc = db.history.find_one({"url": history_url, "user_id": user_id})
+        query = {"url": history_url}
+        if user_id:
+            query["$or"] = [{"user_id": user_id}, {"visibility": "public"}]
+        else:
+            query["visibility"] = "public"
+
+        history_doc = db.history.find_one(query)
 
     if not history_doc:
-        history_id, url = create_history(
-            user_id=user_id, title=question, visibility="private"
-        )
-        history_doc = db.history.find_one({"_id": ObjectId(history_id)})
+        if user_id:
+            history_id, url = create_history(
+                user_id=user_id, title=question, visibility="private"
+            )
+            history_doc = db.history.find_one({"_id": ObjectId(history_id)})
+        else:
+            return jsonify({"error": "History not found or access denied"}), 404
     else:
         history_id = history_doc["_id"]
         url = history_doc["url"]

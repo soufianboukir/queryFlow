@@ -68,32 +68,38 @@ def get_user_histories():
 
 def get_history_by_url(url):
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return jsonify({"error": "Missing token"}), 401
+    user_id = None
 
-    token = auth_header.split(" ")[1]
-    try:
-        user_id = verify_token(token)
-    except:
-        return jsonify({"error": "Invalid token"}), 401
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split(" ")[1]
+        try:
+            user_id = ObjectId(verify_token(token))
+        except:
+            return jsonify({"error": "Invalid token"}), 401
 
-    history = db.history.find_one({"url": url, "user_id": ObjectId(user_id)})
+    query = {"url": url}
+    if user_id:
+        query["$or"] = [{"user_id": user_id}, {"visibility": "public"}]
+    else:
+        query["visibility"] = "public"
+
+    history = db.history.find_one(query)
 
     if not history:
-        return jsonify({"error": "Not found"}), 404
+        return jsonify({"error": "History not found or access denied"}), 404
 
     queries_cursor = db.queries.find({"history_id": history["_id"]}).sort("_id", 1)
 
     messages = []
-
     for q in queries_cursor:
         messages.append({"role": "user", "content": q.get("question", "")})
         messages.append({"role": "assistant", "content": q.get("answer", "")})
 
-    return jsonify(
-        {"history_id": str(history["_id"]), "url": history["url"], "messages": messages}
-    )
-
+    return jsonify({
+        "history_id": str(history["_id"]),
+        "url": history["url"],
+        "messages": messages
+    })
 
 def update_visibility(id):
     try:
