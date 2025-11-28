@@ -20,6 +20,7 @@ import {
 import { useEffect, useState } from "react";
 import { getCurrentUser, logout } from "@/services/auth";
 import { User } from "@/types/user";
+import { AuthRequiredDialog } from "./auth-required";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -34,7 +35,10 @@ export function NavUser() {
         .find((row) => row.startsWith("token="))
         ?.split("=")[1];
 
-      if (!token) return;
+      if (!token) {
+        setLoading(false)
+        return
+      }
       try {
         const response = await getCurrentUser(token);
         setUser(response.data);
@@ -47,9 +51,10 @@ export function NavUser() {
 
     fetchUser();
   }, []);
-
+  
+  if (!user && !loading) return <AuthRequiredDialog />;
   if (!user && loading) return <div>{null}</div>;
-  if (!user && !loading) return null;
+
 
   return (
     <SidebarMenu>
@@ -97,17 +102,6 @@ export function NavUser() {
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <UserCircle />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout}>
               <LogOut />

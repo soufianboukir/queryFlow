@@ -3,6 +3,8 @@
 import * as React from "react";
 import {
   Contact,
+  Github,
+  GithubIcon,
   Home,
   MessageCirclePlus,
   MessageCircleQuestion,
@@ -26,7 +28,12 @@ import { Histories } from "./histories";
 const data = {
   navSecondary: [
     {
-      title: "Contact",
+      title: "Github",
+      url: "https://github.com/soufianboukir/queryFlow",
+      icon: GithubIcon,
+    },
+    {
+      title: "Team",
       url: "#",
       icon: Contact,
     },

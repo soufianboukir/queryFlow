@@ -22,7 +22,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
-import { ArrowUp, LoaderIcon } from "lucide-react";
+import { ArrowUp, Loader2Icon, LoaderIcon } from "lucide-react";
 import { useState, useEffect, useRef, KeyboardEvent, JSX } from "react";
 import { useParams } from "next/navigation";
 import { ask } from "@/services/ask";
@@ -46,6 +46,7 @@ export default function Page() {
   const [streamText, setStreamText] = useState<string>("");
   const chatRef = useRef<HTMLDivElement | null>(null);
   const [historyId, setHistoryId] = useState<string | null>(null);
+  const [loadingRes,setLoadingRes] = useState(false)
 
   function formatText(text: string) {
     const regex = /(\*\*([^\*]+)\*\*)|'([^']+)'/g;
@@ -112,6 +113,8 @@ export default function Page() {
         return;
       }
 
+      setLoadingRes(true)
+
       const queryParams = new URLSearchParams({
         question: userMessage,
       });
@@ -126,6 +129,8 @@ export default function Page() {
 
       const data = response.data;
       const assistantResponse = data.response || "";
+
+      setLoadingRes(false)
 
       if (data.history_id) {
         if (!historyId) setHistoryId(data.history_id);
@@ -158,6 +163,7 @@ export default function Page() {
     } catch (err) {
       console.error("Error:", err);
       setLoading(false);
+      setLoadingRes(false)
     }
   };
 
@@ -291,6 +297,18 @@ export default function Page() {
                 </div>
               ))}
 
+              {
+                loadingRes && (
+                  <div
+                    className={`p-2 flex gap-1 items-center rounded-xl font-sans text-xl text-black/70 dark:text-white/70 animate-pulse`}
+                  style={{ animationDuration: "1.3s" }}
+                  >
+                    <Loader2Icon className="animate-spin" style={{ animationDuration: "0.6s" }}/> <span>Wait a sec...</span>
+                  </div>
+                )
+              }
+
+
               {streamText && (
                 <div className="p-2 rounded-xl text-xl font-sans dark:text-white/70 text-black/70">
                   {formatText(streamText)}
@@ -333,8 +351,7 @@ export default function Page() {
             </InputGroup>
 
             <p className="mt-2 text-white/40 text-sm text-center">
-              queryFlow always makes mistakes. Don&apos;t take anything as
-              absolute.
+              queryFlow always make mistakes. Don&apos;t take anything
             </p>
           </div>
         </div>
