@@ -297,7 +297,7 @@ export default function Page() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset className="flex flex-col h-full">
-        <header className="flex h-14 shrink-0 items-center gap-2">
+        <header className="flex h-12 shrink-0 items-center gap-2">
           <div className="flex flex-1 items-center gap-2 px-3">
             <SidebarTrigger />
             <Separator
@@ -320,7 +320,7 @@ export default function Page() {
         </header>
 
         <div
-          className={`flex flex-col w-full md:w-[80%] lg:w-[60%] mx-auto px-4 py-6 ${
+          className={`flex flex-col w-full md:w-[80%] lg:w-[60%] mx-auto px-4 ${
             messages.length === 0 ? "mt-[10%]" : ""
           }`}
         >
@@ -348,7 +348,7 @@ export default function Page() {
 
             <div
               ref={chatRef}
-              className="flex flex-col gap-4 overflow-y-auto px-3 py-2 rounded-lg flex-1 max-h-[70vh] no-scrollbar"
+              className="flex flex-col gap-4 overflow-y-auto px-3 py-2 rounded-lg flex-1 max-h-[76vh] no-scrollbar"
             >
               {messages.map((msg, index) => (
                 <div
@@ -418,7 +418,7 @@ export default function Page() {
             </InputGroup>
 
             <p className="mt-2 dark:text-white/40 text-sm text-center text-black/40">
-              queryFlow always make mistakes. Don&apos;t take anything
+              queryFlow-v1
             </p>
           </div>
         </div>
