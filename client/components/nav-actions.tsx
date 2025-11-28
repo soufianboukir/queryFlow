@@ -41,7 +41,9 @@ export function NavActions() {
   return (
     <div className="flex items-center gap-2 text-sm">
       {user && (
-        <p>Logged in as <strong>{user.name}</strong></p>
+        <p>
+          Logged in as <strong>{user.name}</strong>
+        </p>
       )}
       {!user && !loading && <Login />}
       <ModeToggle />

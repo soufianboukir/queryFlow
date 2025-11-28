@@ -20,8 +20,8 @@ export function HelpDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div className="flex gap-2 items-center ml-1.5 cursor-pointer">
-            <HelpCircle size={15}/>
-            Help
+          <HelpCircle size={15} />
+          Help
         </div>
       </DialogTrigger>
 
@@ -37,7 +37,9 @@ export function HelpDialog() {
           <div>
             <h3 className="font-semibold">🔹 What is QueryFlow?</h3>
             <p>
-               A web‐based FAQ chatbot for the software & technology domain. Users can ask basic technical questions and get answers automatically from a curated FAQ dataset. 
+              A web‐based FAQ chatbot for the software & technology domain.
+              Users can ask basic technical questions and get answers
+              automatically from a curated FAQ dataset.
             </p>
           </div>
 

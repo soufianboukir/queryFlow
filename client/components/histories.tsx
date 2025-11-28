@@ -94,8 +94,6 @@ export function Histories() {
       prev.map((h) => (h._id === id ? { ...h, visibility: newVisibility } : h)),
     );
   };
-  
-  
 
   if (loading) {
     return (
@@ -133,7 +131,10 @@ export function Histories() {
       <SidebarMenu>
         {histories.map((item) => (
           <SidebarMenuItem key={item.url} className="h-8">
-            <SidebarMenuButton asChild isActive={'/chat/'+item.url === window.location.pathname}>
+            <SidebarMenuButton
+              asChild
+              isActive={"/chat/" + item.url === window.location.pathname}
+            >
               <Link href={`/chat/${item.url}`} title={item.title}>
                 <span>{item.title}</span>
               </Link>

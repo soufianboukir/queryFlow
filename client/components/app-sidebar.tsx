@@ -1,16 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Contact,
-  Github,
-  GithubIcon,
-  Home,
-  MessageCirclePlus,
-  MessageCircleQuestion,
-  MessageSquareShare,
-  Search,
-} from "lucide-react";
+import { Contact, GithubIcon, MessageCircleQuestion } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";

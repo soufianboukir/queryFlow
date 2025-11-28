@@ -95,11 +95,10 @@ def get_history_by_url(url):
         messages.append({"role": "user", "content": q.get("question", "")})
         messages.append({"role": "assistant", "content": q.get("answer", "")})
 
-    return jsonify({
-        "history_id": str(history["_id"]),
-        "url": history["url"],
-        "messages": messages
-    })
+    return jsonify(
+        {"history_id": str(history["_id"]), "url": history["url"], "messages": messages}
+    )
+
 
 def update_visibility(id):
     try:

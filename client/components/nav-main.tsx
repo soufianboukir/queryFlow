@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, Newspaper, SquarePlay, SquarePlus, type LucideIcon } from "lucide-react";
+import { SquarePlus } from "lucide-react";
 
 import {
   SidebarMenu,
@@ -14,10 +14,10 @@ export function NavMain() {
   return (
     <SidebarMenu className="flex flex-col gap-3 ml-2">
       <SidebarMenuItem>
-          <Link href={'/'} className="flex gap-2 items-center">
-            <SquarePlus size={15}/>
-            <span>New chat</span>
-          </Link>
+        <Link href={"/"} className="flex gap-2 items-center">
+          <SquarePlus size={15} />
+          <span>New chat</span>
+        </Link>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>

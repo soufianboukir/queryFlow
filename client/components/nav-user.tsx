@@ -1,11 +1,10 @@
 "use client";
 
-import { Bell, ChevronsUpDown, LogOut, UserCircle } from "lucide-react";
+import { ChevronsUpDown, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -36,8 +35,8 @@ export function NavUser() {
         ?.split("=")[1];
 
       if (!token) {
-        setLoading(false)
-        return
+        setLoading(false);
+        return;
       }
       try {
         const response = await getCurrentUser(token);
@@ -51,10 +50,9 @@ export function NavUser() {
 
     fetchUser();
   }, []);
-  
+
   if (!user && !loading) return <AuthRequiredDialog />;
   if (!user && loading) return <div>{null}</div>;
-
 
   return (
     <SidebarMenu>

@@ -5,14 +5,11 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { HelpDialog } from "./help";
 import { TeamDialog } from "./team";
 
 export function NavSecondary({
-  items,
   ...props
 }: {
   items: {
@@ -26,14 +23,18 @@ export function NavSecondary({
     <SidebarGroup {...props}>
       <SidebarGroupContent>
         <SidebarMenu className="flex flex-col gap-3">
-            <a className="flex gap-2 items-center ml-1.5" href="https://github.com/soufianboukir/queryFlow" target="_blank">
-              <GithubIcon size={15}/>
-              <span>Github</span>
-            </a>
+          <a
+            className="flex gap-2 items-center ml-1.5"
+            href="https://github.com/soufianboukir/queryFlow"
+            target="_blank"
+          >
+            <GithubIcon size={15} />
+            <span>Github</span>
+          </a>
 
-            <HelpDialog />
+          <HelpDialog />
 
-            <TeamDialog />
+          <TeamDialog />
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

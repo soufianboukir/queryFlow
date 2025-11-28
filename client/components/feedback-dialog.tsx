@@ -44,9 +44,9 @@ export function FeedbackDialogMailto() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div className="flex gap-2 items-center cursor-pointer">
-            <MessageSquareShare size={15}/>
-            <span>Feedback</span>
-          </div>
+          <MessageSquareShare size={15} />
+          <span>Feedback</span>
+        </div>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-md">
