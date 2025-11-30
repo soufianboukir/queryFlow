@@ -34,7 +34,7 @@ export function useAskQuestion() {
     onSuccess: (data) => {
       // Invalidate history queries to refetch updated data
       if (data.history_id || data.url) {
-        queryClient.invalidateQueries({ queryKey: historyKeys.all() });
+        queryClient.invalidateQueries({ queryKey: historyKeys.all });
       }
     },
   });

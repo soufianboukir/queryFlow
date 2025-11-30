@@ -80,7 +80,7 @@ export function useUpdateVisibility() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: historyKeys.all() });
+      queryClient.invalidateQueries({ queryKey: historyKeys.all });
     },
   });
 }
@@ -101,7 +101,7 @@ export function useUpdateTitle() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: historyKeys.all() });
+      queryClient.invalidateQueries({ queryKey: historyKeys.all });
     },
   });
 }
@@ -122,7 +122,7 @@ export function useDeleteHistory() {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: historyKeys.all() });
+      queryClient.invalidateQueries({ queryKey: historyKeys.all });
     },
   });
 }
