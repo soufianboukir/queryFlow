@@ -19,12 +19,12 @@ flake8 server/ models/
 
 ### Python formatting
 ```bash
-black --check server/ models/
+black --check server/models/
 ```
 
 ### Format python files automaticlly
 ```bash
-black server/ models/
+black server/models/
 ```
 
 ## 3. Next.js / TypeScript Formatting
@@ -37,7 +37,7 @@ npm run prettier:fix"
 ## 4. Security check
 ### Bandit (python security linter)
 ```bash
-bandit -r server/ models/
+bandit -r server/models/
 ```
 
 ### ESLint
