@@ -14,47 +14,30 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Trash2 } from "lucide-react";
-import { deleteHistory } from "@/services/history";
 import { toast } from "sonner";
+import { useDeleteHistory } from "@/hooks/use-history";
 
-export function DeleteHistory({
-  id,
-  onDeleted,
-}: {
-  id: string;
-  onDeleted: (id: string) => void;
-}) {
+export function DeleteHistory({ id }: { id: string }) {
   const [text, setText] = useState("");
-  const [loading, setLoading] = useState(false);
+  const deleteMutation = useDeleteHistory();
 
   const handleDelete = async () => {
     if (text.trim().toLowerCase() !== "delete") return;
 
-    setLoading(true);
+    deleteMutation.mutate(id, {
+      onSuccess: (data: { message?: string }) => {
+        toast.success(data.message || "History deleted successfully");
+        setText("");
 
-    try {
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
-
-      const res = await deleteHistory(id, token!);
-
-      if (res.status === 200) {
-        toast.success(res.data.message);
-        onDeleted(id);
-      }
-    } catch {
-      toast.error("An error occured. Try again");
-    } finally {
-      setLoading(false);
-      setText("");
-
-      const closeBtn = document.querySelector(
-        "[data-delete-dialog-close]",
-      ) as HTMLButtonElement | null;
-      closeBtn?.click();
-    }
+        const closeBtn = document.querySelector(
+          "[data-delete-dialog-close]",
+        ) as HTMLButtonElement | null;
+        closeBtn?.click();
+      },
+      onError: () => {
+        toast.error("An error occurred. Try again");
+      },
+    });
   };
 
   const valid = text.toLowerCase() === "delete";
@@ -93,11 +76,11 @@ export function DeleteHistory({
 
           <Button
             variant="destructive"
-            disabled={!valid || loading}
+            disabled={!valid || deleteMutation.isPending}
             onClick={handleDelete}
             className="cursor-pointer hover:bg-red-900 duration-150"
           >
-            {loading ? "Deleting..." : "Delete"}
+            {deleteMutation.isPending ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>
       </DialogContent>

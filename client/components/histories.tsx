@@ -1,7 +1,7 @@
 "use client";
 
 import { MoreHorizontal } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import {
   DropdownMenu,
@@ -20,11 +20,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { getHistories } from "@/services/history";
 import { DeleteHistory } from "./delete-history";
 import { RenameHistory } from "./rename-history";
 import { ChangeVisibility } from "./change-visibility";
 import { ChatLink } from "./chat-link";
+import { useHistories } from "@/hooks/use-history";
 
 type HistoryItem = {
   _id: string;
@@ -35,65 +35,17 @@ type HistoryItem = {
 
 export function Histories() {
   const { isMobile } = useSidebar();
-
-  const [histories, setHistories] = useState<HistoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading: loading } = useHistories();
   const [toPublic, setToPublic] = useState(false);
   const [url, setUrl] = useState("");
 
-  useEffect(() => {
-    const fetchHistories = async () => {
-      setLoading(true);
-      try {
-        const token = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("token="))
-          ?.split("=")[1];
-
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-
-        const response = await getHistories(token);
-
-        if (response.status !== 200) {
-          throw new Error(`Failed to fetch histories`);
-        }
-
-        if (response.data.histories && Array.isArray(response.data.histories)) {
-          setHistories(response.data.histories);
-        } else {
-          setHistories(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching chat histories:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHistories();
-  }, []);
-
-  const handleRename = (id: string, newTitle: string) => {
-    setHistories((prev) =>
-      prev.map((h) => (h._id === id ? { ...h, title: newTitle } : h)),
-    );
-  };
-
-  const handleDelete = (id: string) => {
-    setHistories((prev) => prev.filter((h) => h._id !== id));
-  };
-
-  const handleChangeVisibility = (
-    id: string,
-    newVisibility: "public" | "private",
-  ) => {
-    setHistories((prev) =>
-      prev.map((h) => (h._id === id ? { ...h, visibility: newVisibility } : h)),
-    );
-  };
+  // Extract histories from response (handle different response shapes)
+  const histories: HistoryItem[] =
+    data?.histories && Array.isArray(data.histories)
+      ? data.histories
+      : Array.isArray(data)
+      ? data
+      : [];
 
   if (loading) {
     return (
@@ -160,27 +112,20 @@ export function Histories() {
                     hisVisibility={item.visibility}
                     setUrl={setUrl}
                     setToPublic={setToPublic}
-                    onChangeVis={(newVisibility: "private" | "public") =>
-                      handleChangeVisibility(item._id, newVisibility)
-                    }
                   />
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onSelect={(e) => e.preventDefault()}
                 >
-                  <RenameHistory
-                    id={item._id}
-                    title={item.title}
-                    onRename={handleRename}
-                  />
+                  <RenameHistory id={item._id} title={item.title} />
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onSelect={(e) => e.preventDefault()}
                 >
-                  <DeleteHistory id={item._id} onDeleted={handleDelete} />
+                  <DeleteHistory id={item._id} />
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

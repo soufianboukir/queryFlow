@@ -14,52 +14,47 @@ import {
 } from "@/components/ui/dialog";
 import { Share } from "lucide-react";
 import { toast } from "sonner";
-import { updateVisibility } from "@/services/history";
+import { useUpdateVisibility } from "@/hooks/use-history";
 
 export function ChangeVisibility({
   id,
   hisVisibility,
   setToPublic,
   setUrl,
-  onChangeVis,
 }: {
   id: string;
   setUrl: (url: string) => void;
   hisVisibility: "public" | "private";
   setToPublic: (toPublic: boolean) => void;
-  onChangeVis: (newVisibility: "public" | "private") => void;
 }) {
-  const [loading, setLoading] = useState(false);
   const visibility = hisVisibility === "private" ? "public" : "private";
+  const updateMutation = useUpdateVisibility();
+
   const handleEdit = async () => {
-    setLoading(true);
+    updateMutation.mutate(
+      { id, visibility },
+      {
+        onSuccess: (data: {
+          message?: string;
+          visibility?: "public" | "private";
+          url?: string;
+        }) => {
+          toast.success(data.message || "Visibility updated successfully");
+          if (data.visibility === "public" && data.url) {
+            setToPublic(true);
+            setUrl(data.url);
+          }
 
-    try {
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
-
-      const res = await updateVisibility(id, token!, visibility);
-
-      if (res.status === 200) {
-        toast.success(res.data.message);
-        onChangeVis(res.data.visibility);
-        if (res.data.visibility === "public") {
-          setToPublic(true);
-          setUrl(res.data.url);
-        }
+          const closeBtn = document.querySelector(
+            "[data-delete-dialog-close]",
+          ) as HTMLButtonElement | null;
+          closeBtn?.click();
+        },
+        onError: () => {
+          toast.error("An error occurred. Try again");
+        },
       }
-    } catch {
-      toast.error("An error occured. Try again");
-    } finally {
-      setLoading(false);
-
-      const closeBtn = document.querySelector(
-        "[data-delete-dialog-close]",
-      ) as HTMLButtonElement | null;
-      closeBtn?.click();
-    }
+    );
   };
 
   return (
@@ -87,11 +82,13 @@ export function ChangeVisibility({
           </DialogClose>
 
           <Button
-            disabled={loading}
+            disabled={updateMutation.isPending}
             onClick={handleEdit}
             className="cursor-pointer"
           >
-            {loading ? "Editing..." : `Change to ${visibility}`}
+            {updateMutation.isPending
+              ? "Editing..."
+              : `Change to ${visibility}`}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -14,49 +14,39 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FolderPen } from "lucide-react";
-import { updateTitle } from "@/services/history";
 import { toast } from "sonner";
+import { useUpdateTitle } from "@/hooks/use-history";
 
 export function RenameHistory({
   id,
   title,
-  onRename,
 }: {
   id: string;
-  onRename: (id: string, newTitle: string) => void;
   title: string;
 }) {
   const [titleInput, setTitleInput] = useState(title || "");
-  const [loading, setLoading] = useState(false);
+  const updateMutation = useUpdateTitle();
 
   const handleEdit = async () => {
     if (titleInput.trim().toLowerCase() === "") return;
 
-    setLoading(true);
+    updateMutation.mutate(
+      { id, title: titleInput },
+      {
+        onSuccess: (data: { message?: string; title?: string }) => {
+          toast.success(data.message || "Title updated successfully");
+          setTitleInput("");
 
-    try {
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
-
-      const res = await updateTitle(id, titleInput, token!);
-
-      if (res.status === 200) {
-        toast.success(res.data.message);
-        onRename(id, res.data.title);
+          const closeBtn = document.querySelector(
+            "[data-delete-dialog-close]",
+          ) as HTMLButtonElement | null;
+          closeBtn?.click();
+        },
+        onError: () => {
+          toast.error("An error occurred. Try again");
+        },
       }
-    } catch {
-      toast.error("An error occured. Try again");
-    } finally {
-      setLoading(false);
-      setTitleInput("");
-
-      const closeBtn = document.querySelector(
-        "[data-delete-dialog-close]",
-      ) as HTMLButtonElement | null;
-      closeBtn?.click();
-    }
+    );
   };
 
   const valid = titleInput.trim().length > 0;
@@ -92,11 +82,11 @@ export function RenameHistory({
           </DialogClose>
 
           <Button
-            disabled={!valid || loading}
+            disabled={!valid || updateMutation.isPending}
             onClick={handleEdit}
             className="cursor-pointer"
           >
-            {loading ? "Editing..." : "Edit"}
+            {updateMutation.isPending ? "Editing..." : "Edit"}
           </Button>
         </DialogFooter>
       </DialogContent>

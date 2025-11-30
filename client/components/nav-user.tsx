@@ -16,40 +16,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useEffect, useState } from "react";
-import { getCurrentUser, logout } from "@/services/auth";
-import { User } from "@/types/user";
+import { logout } from "@/services/auth";
 import { AuthRequiredDialog } from "./auth-required";
+import { useCurrentUser } from "@/hooks/use-auth";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
-
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-      try {
-        const response = await getCurrentUser(token);
-        setUser(response.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const { data: user, isLoading: loading } = useCurrentUser();
 
   if (!user && !loading) return <AuthRequiredDialog />;
   if (!user && loading) return <div>{null}</div>;
