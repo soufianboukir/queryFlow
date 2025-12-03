@@ -389,7 +389,7 @@ export default function Page() {
             <InputGroup>
               <InputGroupTextarea
                 className="text-xl font-semibold"
-                placeholder="Ask anything..."
+                placeholder="Ask anything related to tech..."
                 value={input}
                 readOnly={loading || !!streamText}
                 onChange={(e) => setInput(e.target.value)}
