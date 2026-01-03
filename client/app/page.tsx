@@ -381,11 +381,7 @@ export default function Page() {
                 <DropdownMenu />
                 <InputGroupText className="ml-auto">52% used</InputGroupText>
                 <Separator orientation="vertical" />
-                <Button className="rounded-full cursor-pointer"
-                  size="icon-sm"
-                >
-                  <Mic />
-                </Button>
+                <AudioRecorderDialog />
                 <InputGroupButton
                   variant="default"
                   className="rounded-full cursor-pointer"
@@ -402,7 +398,6 @@ export default function Page() {
                 </InputGroupButton>
               </InputGroupAddon>
             </InputGroup>
-            <AudioRecorderDialog />
 
             <p className="mt-2 dark:text-white/40 text-sm text-center text-black/40">
               queryFlow-v1
