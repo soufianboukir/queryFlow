@@ -22,7 +22,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
-import { ArrowUp, Loader2Icon, LoaderIcon, Mic, Mic2 } from "lucide-react";
+import { ArrowUp, Copy, CopyCheck, Loader2Icon, LoaderIcon, Mic, Mic2, ThumbsDown, ThumbsUp, VoicemailIcon, Volume2 } from "lucide-react";
 import { useState, useEffect, useRef, KeyboardEvent, JSX } from "react";
 import { useParams } from "next/navigation";
 import { ask } from "@/services/ask";
@@ -31,6 +31,7 @@ import { User } from "@/types/user";
 import { getCurrentUser } from "@/services/auth";
 import { Button } from "@/components/ui/button";
 import AudioRecorderDialog from "@/components/audio-recording-dialog";
+import AudioPlayerDialog from "@/components/audio-player-dialog";
 
 type Message = {
   role: "user" | "assistant";
@@ -43,7 +44,6 @@ export default function Page() {
   const routeHistoryUrl = params?.url as string | null;
 
   const [chatUrl, setChatUrl] = useState<string | null>(routeHistoryUrl);
-
   const [loading, setLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -53,6 +53,71 @@ export default function Page() {
   const [loadingRes, setLoadingRes] = useState(false);
   const [loadUser, setLoadUser] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [likedIndices, setLikedIndices] = useState<number[]>([]);
+  const [dislikedIndices, setDislikedIndices] = useState<number[]>([]);
+
+  const [audioDialogOpen, setAudioDialogOpen] = useState(false);
+  const [currentAudioText, setCurrentAudioText] = useState("");
+
+  // Update the playMessage function
+  const handlePlayMessage = (text: string) => {
+    setCurrentAudioText(text);
+    setAudioDialogOpen(true);
+  };
+
+  const toggleLike = (index: number) => {
+    setLikedIndices((prev) => 
+      prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
+    );
+    setDislikedIndices((prev) => prev.filter(i => i !== index));
+  };
+
+  const toggleDislike = (index: number) => {
+    setDislikedIndices((prev) => 
+      prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
+    );
+    setLikedIndices((prev) => prev.filter(i => i !== index));
+  };
+
+
+  const playMessage = async (text: string) => {
+    try {
+      const res = await fetch("http://localhost:5000/api/tts/speak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+
+      if (!res.ok) throw new Error("TTS request failed");
+
+      // Convert the response to a Blob
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      
+      // Play the audio
+      const audio = new Audio(url);
+      audio.play();
+    } catch (error) {
+      console.error("Error playing message:", error);
+    }
+  };
+
+  const [copiedId, setCopiedId] = useState<string | number | null>(null);
+
+  const copyToClipboard = async (content: string, id: string | number) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedId(id);
+      
+      setTimeout(() => {
+        setCopiedId(null);
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy!", err);
+    }
+  };
+
+
 
   function formatText(text: string) {
     if (typeof text !== "string") return text;
@@ -112,12 +177,12 @@ export default function Page() {
     return parts;
   }
 
-  const send = async () => {
-    if (!input.trim()) return;
+  const send = async (messageOverride?: string) => {
+    const contentToSend = messageOverride || input;
 
-    setMessages((prev) => [...prev, { role: "user", content: input }]);
+    if (!contentToSend.trim()) return;
 
-    const userMessage = input;
+    setMessages((prev) => [...prev, { role: "user", content: contentToSend }]);
     setInput("");
     setLoading(true);
 
@@ -135,7 +200,7 @@ export default function Page() {
       setLoadingRes(true);
 
       const queryParams = new URLSearchParams({
-        question: userMessage,
+        question: contentToSend, // Use contentToSend instead of input
       });
 
       const activeUrl = chatUrl || routeHistoryUrl;
@@ -145,7 +210,6 @@ export default function Page() {
       }
 
       const response = await ask(token, queryParams);
-
       const data = response.data;
       const assistantResponse = data.response || "";
 
@@ -153,7 +217,6 @@ export default function Page() {
 
       if (data.history_id) {
         if (!historyId) setHistoryId(data.history_id);
-
         if (data.url && data.url !== chatUrl) {
           setChatUrl(data.url);
           window.history.replaceState(null, "", `/chat/${data.url}`);
@@ -274,6 +337,10 @@ export default function Page() {
     fetchUser();
   }, []);
 
+  const sendTranscript = async (transcript: string) => {
+    await send(transcript);
+  };
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -305,6 +372,11 @@ export default function Page() {
             messages.length === 0 ? "mt-[10%]" : ""
           }`}
         >
+          <AudioPlayerDialog
+            text={currentAudioText}
+            open={audioDialogOpen}
+            onOpenChange={setAudioDialogOpen}
+          />
           <div
             className={`flex flex-col flex-1 ${
               messages.length === 0 ? "justify-center" : "justify-start"
@@ -341,6 +413,53 @@ export default function Page() {
                   }`}
                 >
                   {formatText(msg.content)}
+                  {msg.role === 'assistant' && (
+                    <div className="mt-2 flex">
+                      <Button 
+                        size={'icon-sm'} 
+                        variant={'ghost'} 
+                        className={`cursor-pointer transition-all ${
+                          likedIndices.includes(index) ? 'text-black dark:text-white animate-in zoom-in duration-100' : ''
+                        }`}
+                        onClick={() => toggleLike(index)}
+                      >
+                        <ThumbsUp className={likedIndices.includes(index) ? "fill-current" : "h-4 w-4"} />
+                      </Button>
+
+                      <Button 
+                        size={'icon-sm'} 
+                        variant={'ghost'} 
+                        className={`cursor-pointer transition-all ${
+                          dislikedIndices.includes(index) ? 'text-black animate-in zoom-in duration-100 dark:text-white' : ''
+                        }`}
+                        onClick={() => toggleDislike(index)}
+                      >
+                        <ThumbsDown className={dislikedIndices.includes(index) ? "fill-current" : "h-4 w-4"} />
+                      </Button>
+
+                      <Button 
+                        size={'icon-sm'} 
+                        variant={'ghost'} 
+                        className="cursor-pointer" 
+                        onClick={() => handlePlayMessage(msg.content)}
+                      >
+                        <Volume2 className="h-4 w-4" />
+                      </Button>
+
+                      <Button 
+                        size={'icon-sm'} 
+                        variant={'ghost'} 
+                        className="cursor-pointer" 
+                        onClick={() => copyToClipboard(msg.content, index)}
+                      >
+                        {copiedId === index ? (
+                          <CopyCheck className="text-green-500 animate-in zoom-in duration-300 h-4 w-4" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               ))}
 
@@ -381,7 +500,7 @@ export default function Page() {
                 <DropdownMenu />
                 <InputGroupText className="ml-auto">52% used</InputGroupText>
                 <Separator orientation="vertical" />
-                <AudioRecorderDialog />
+                <AudioRecorderDialog sendTrn={sendTranscript}/>
                 <InputGroupButton
                   variant="default"
                   className="rounded-full cursor-pointer"
