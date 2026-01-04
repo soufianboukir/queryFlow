@@ -116,7 +116,6 @@ export default function Page() {
 
     if (!contentToSend.trim()) return;
 
-    // Clear input and add the message to UI
     setMessages((prev) => [...prev, { role: "user", content: contentToSend }]);
     setInput("");
     setLoading(true);
