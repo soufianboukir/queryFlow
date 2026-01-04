@@ -1,33 +1,30 @@
 "use client";
 
 import * as React from "react";
-import { RotateCcw, Play, Square, Mic, Send, Loader2 } from "lucide-react";
+import { RotateCcw, Play, Square, Mic, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea"; // Assuming shadcn/ui Textarea
+import { Textarea } from "@/components/ui/textarea";
 
-export default function VoiceRecorderDialog() {
+export default function VoiceRecorderDialog({ sendTrn }: { sendTrn: (transcript: string) => void}) {
   const [status, setStatus] = React.useState<"idle" | "recording" | "loading" | "finished">("idle");
   const [time, setTime] = React.useState(0);
   const [levels, setLevels] = React.useState<number[]>(Array(15).fill(10));
   const [transcript, setTranscript] = React.useState("");
-
+  const [open,setOpen] = React.useState(false)
   const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
   const streamRef = React.useRef<MediaStream | null>(null);
   const audioChunksRef = React.useRef<Blob[]>([]);
 
-  // Effect to handle the Timer (Seconds) and Waveform (Animation)
   React.useEffect(() => {
     let timerInterval: NodeJS.Timeout;
     let waveInterval: NodeJS.Timeout;
 
     if (status === "recording") {
-      // 1. Real Chronometer (Increments every 1 second)
       timerInterval = setInterval(() => {
         setTime((t) => t + 1);
       }, 1000);
 
-      // 2. Waveform Animation (Fast updates for visual smoothness)
       waveInterval = setInterval(() => {
         setLevels((prev) => prev.map(() => Math.random() * 30 + 10));
       }, 100);
@@ -103,9 +100,15 @@ export default function VoiceRecorderDialog() {
     setTranscript("");
   };
 
+  const send = () => {
+    if (!transcript.trim()) return;
+    setOpen(false)
+    sendTrn(transcript)
+  }
+
   return (
-    <Dialog onOpenChange={(open) => !open && reset()}>
-      <DialogTrigger asChild>
+    <Dialog onOpenChange={() => setOpen(!open)} open={open}>
+      <DialogTrigger asChild onClick={() => setOpen(true)}>
         <Button size="icon" variant="outline" className="rounded-full">
           <Mic className="h-4 w-4" />
         </Button>
@@ -178,10 +181,10 @@ export default function VoiceRecorderDialog() {
                 />
               </div>
               <div className="flex justify-end gap-2">
-                <Button className="shadow-lg my-2" variant={'outline'} onClick={() => console.log("Final Transcript:", transcript)}>
+                <Button className="shadow-lg my-2" variant={'outline'} onClick={() => setOpen(false)}>
                   Cancel
                 </Button>
-                <Button className="shadow-lg my-2" onClick={() => console.log("Final Transcript:", transcript)}>
+                <Button className="shadow-lg my-2" onClick={send}>
                   Send
                 </Button>
               </div>

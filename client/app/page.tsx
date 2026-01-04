@@ -43,7 +43,6 @@ export default function Page() {
   const routeHistoryUrl = params?.url as string | null;
 
   const [chatUrl, setChatUrl] = useState<string | null>(routeHistoryUrl);
-
   const [loading, setLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -112,12 +111,13 @@ export default function Page() {
     return parts;
   }
 
-  const send = async () => {
-    if (!input.trim()) return;
+  const send = async (messageOverride?: string) => {
+    const contentToSend = messageOverride || input;
 
-    setMessages((prev) => [...prev, { role: "user", content: input }]);
+    if (!contentToSend.trim()) return;
 
-    const userMessage = input;
+    // Clear input and add the message to UI
+    setMessages((prev) => [...prev, { role: "user", content: contentToSend }]);
     setInput("");
     setLoading(true);
 
@@ -135,7 +135,7 @@ export default function Page() {
       setLoadingRes(true);
 
       const queryParams = new URLSearchParams({
-        question: userMessage,
+        question: contentToSend, // Use contentToSend instead of input
       });
 
       const activeUrl = chatUrl || routeHistoryUrl;
@@ -145,7 +145,6 @@ export default function Page() {
       }
 
       const response = await ask(token, queryParams);
-
       const data = response.data;
       const assistantResponse = data.response || "";
 
@@ -153,7 +152,6 @@ export default function Page() {
 
       if (data.history_id) {
         if (!historyId) setHistoryId(data.history_id);
-
         if (data.url && data.url !== chatUrl) {
           setChatUrl(data.url);
           window.history.replaceState(null, "", `/chat/${data.url}`);
@@ -274,6 +272,10 @@ export default function Page() {
     fetchUser();
   }, []);
 
+  const sendTranscript = async (transcript: string) => {
+    await send(transcript);
+  };
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -381,7 +383,7 @@ export default function Page() {
                 <DropdownMenu />
                 <InputGroupText className="ml-auto">52% used</InputGroupText>
                 <Separator orientation="vertical" />
-                <AudioRecorderDialog />
+                <AudioRecorderDialog sendTrn={sendTranscript}/>
                 <InputGroupButton
                   variant="default"
                   className="rounded-full cursor-pointer"
