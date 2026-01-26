@@ -36,7 +36,7 @@ mypy_extensions==1.1.0
 networkx==3.6.1
 numpy==2.4.1
 packaging==25.0
-pandas==2.3.3
+pandas==3.0.0
 pathspec==0.12.1
 pbr==7.0.3
 pillow==12.1.0
