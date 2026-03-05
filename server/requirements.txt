@@ -58,7 +58,7 @@ rich==14.3.2
 roman-numerals-py==4.1.0
 safetensors==0.7.0
 scikit-learn==1.8.0
-scipy==1.17.0
+scipy==1.17.1
 sentence-transformers==5.2.2
 setuptools==82.0.0
 six==1.17.0
