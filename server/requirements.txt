@@ -41,7 +41,7 @@ pathspec==1.0.4
 pbr==7.0.3
 pillow==12.1.0
 pip-tools==7.5.2
-platformdirs==4.5.1
+platformdirs==4.9.4
 pycparser==3.0
 Pygments==2.19.2
 PyJWT==2.12.1
